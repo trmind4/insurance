@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shreyans Computers - Motor Insurance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background-color: #f4f7f6; color: #333; }
+        
+        #login-section { display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #1e3c72, #2a5298); }
+        .login-card { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 400px; text-align: center; }
+        .login-card h2 { margin-bottom: 10px; color: #1e3c72; }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: #555; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; }
+        .btn { background: #2a5298; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .btn:hover { background: #1e3c72; }
+        .error-msg { color: #e74c3c; margin-top: 15px; font-size: 14px; }
+
+        #dashboard-section { display: none; min-height: 100vh; }
+        header { background: #1e3c72; color: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        header button { background: #e74c3c; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        .main-container { max-width: 1300px; margin: 30px auto; padding: 0 20px; display: grid; grid-template-columns: 350px 1fr; gap: 30px; }
+        @media (max-width: 950px) { .main-container { grid-template-columns: 1fr; } }
+        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .card h3 { margin-bottom: 20px; color: #1e3c72; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px; }
+        
+        .search-box-container { margin-bottom: 20px; position: relative; }
+        .search-box-container input { width: 100%; padding: 10px 15px 10px 38px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; outline: none; }
+        .search-box-container i { position: absolute; left: 12px; top: 13px; color: #888; }
+
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        table th, table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+        table th { background: #f8f9fa; font-weight: 600; }
+        .badge { padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .badge-active { background: #e1f5fe; color: #0288d1; }
+        .badge-expired { background: #ffebee; color: #c62828; }
+    </style>
+</head>
+<body>
+
+    <!-- Login Section -->
+    <div id="login-section">
+        <div class="login-card">
+            <h2>Shreyans Computers</h2>
+            <p style="margin-bottom: 20px; color: #666; font-size: 14px;">Motor Insurance Portal</p>
+            <div class="form-group">
+                <label>User id</label>
+                <input type="text" id="username" placeholder="admin">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="12345">
+            </div>
+            <button class="btn" onclick="handleLogin()">Login</button>
+            <div id="login-error" class="error-msg"></div>
+        </div>
+    </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard-section">
+        <header>
+            <h1><i class="fa-solid fa-shield-halved"></i> Shreyans Computers</h1>
+            <button onclick="handleLogout()"><i class="fa-solid fa-right-from-bracket"></i>Logout</button>
+        </header>
+
+        <div class="main-container">
+            <div class="card">
+                <h3><i class="fa-solid fa-user-plus"></i> New Customer Entry</h3>
+                <form id="customerForm" onsubmit="handleFormSubmit(event)">
+                    <div class="form-group">
+                        <label>RC No</label>
+                        <input type="text" id="rcNo" required placeholder="TR-01-AB-1234">
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" id="name" required placeholder="Customer Name">
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile</label>
+                        <input type="tel" id="mobile" required pattern="[0-9]{10}" placeholder="10-digit Mobile">
+                    </div>
+                    <div class="form-group">
+                        <label>Expire Date</label>
+                        <input type="date" id="expireDate" required>
+                    </div>
+                    <button type="submit" class="btn" id="submitBtn">Save</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h3><i class="fa-solid fa-list-check"></i> Customer List</h3>
+                <div class="search-box-container">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Search (Name or RC No)...">
+                </div>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>RC NO</th>
+                                <th>NAME</th>
+                                <th>MOBILE</th>
+                                <th>EXPIRE DATE</th>
+                                <th>STATUS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customerTableBody">
+                            <tr><td colspan="5" style="text-align:center;">Data is loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // আপনার গুগল অ্যাপস স্ক্রিপ্ট ওয়েব অ্যাপ ইউআরএল এখানে বসান
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyoLx4XUoykmALPg_TEJulWOz-hGQGMLvqurNfHfRF34PhVyctgaOg5imUlxQoyjbBMHQ/exec";
+        let allCustomerData = [];
+
+        async function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('login-error');
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({ action: "login", username, password })
+                });
+                const result = await response.json();
+                
+                if(result.success) {
+                    document.getElementById('login-section').style.display = 'none';
+                    document.getElementById('dashboard-section').style.display = 'block';
+                    loadCustomers();
+                } else {
+                    errorDiv.innerText = result.message;
+                }
+            } catch (err) {
+                errorDiv.innerText = "An error occurred!";
+            }
+        }
+
+        function handleLogout() {
+            document.getElementById('dashboard-section').style.display = 'none';
+            document.getElementById('login-section').style.display = 'flex';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerText = "Saving...";
+
+            const data = {
+                action: "addCustomer",
+                rcNo: document.getElementById('rcNo').value,
+                name: document.getElementById('name').value,
+                mobile: document.getElementById('mobile').value,
+                expireDate: document.getElementById('expireDate').value
+            };
+
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                alert(result.message);
+                if(result.success) {
+                    document.getElementById('customerForm').reset();
+                    loadCustomers();
+                }
+            } catch (err) {
+                alert("An error occurred while saving data!");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "Save";
+            }
+        }
+
+        async function loadCustomers() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                allCustomerData = await response.json();
+                renderTable(allCustomerData);
+            } catch (err) {
+                console.error("Error loading data", err);
+            }
+        }
+
+        function renderTable(data) {
+            const tbody = document.getElementById('customerTableBody');
+            tbody.innerHTML = '';
+            
+            if(data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#777;">No data found.</td></tr>';
+                return;
+            }
+
+            const today = new Date();
+            today.setHours(0,0,0,0);
+
+            data.forEach(row => {
+                const expDate = new Date(row.expireDate);
+                const isExpired = expDate < today;
+                const statusBadge = isExpired 
+                    ? '<span class="badge badge-expired">Expired</span>' 
+                    : '<span class="badge badge-active">Active</span>';
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><b>${row.rcNo}</b></td>
+                    <td>${row.name}</td>
+                    <td>${row.mobile}</td>
+                    <td>${row.expireDate}</td>
+                    <td>${statusBadge}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterTable() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = allCustomerData.filter(row => 
+                row.rcNo.toLowerCase().includes(query) || 
+                row.name.toLowerCase().includes(query) || 
+                row.mobile.toLowerCase().includes(query)
+            );
+            renderTable(filtered);
+        }
+    </script>
+</body>
+</html>
