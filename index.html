@@ -228,17 +228,26 @@
             });
         }
 
-        function filterTable() {
-            function filterTable() {
-            var query = document.getElementById('searchInput').value.toLowerCase();
-            var filtered = allCustomerData.filter(function(row) {
-                var rcNo = row.rcNo ? String(row.rcNo).toLowerCase() : "";
-                var name = row.name ? String(row.name).toLowerCase() : "";
-                var mobile = row.mobile ? String(row.mobile).toLowerCase() : "";
+      function filterTable() {
+            var query = document.getElementById('searchInput').value.trim().toLowerCase();
+            
+            if (query === "") {
+                renderTable(allCustomerData);
+                return;
+            }
 
-                return rcNo.includes(query) || name.includes(query) || mobile.includes(query);
+            var filtered = allCustomerData.filter(function(row) {
+                var rcNo = String(row.rcNo || "").toLowerCase();
+                var name = String(row.name || "").toLowerCase();
+                var mobile = String(row.mobile || "").toLowerCase();
+
+                return rcNo.indexOf(query) !== -1 || 
+                       name.indexOf(query) !== -1 || 
+                       mobile.indexOf(query) !== -1;
             });
+            
             renderTable(filtered);
+        }
         }
         }
     </script>
