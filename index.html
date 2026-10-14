@@ -229,13 +229,17 @@
         }
 
         function filterTable() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = allCustomerData.filter(row => 
-                row.rcNo.toLowerCase().includes(query) || 
-                row.name.toLowerCase().includes(query) || 
-                row.mobile.toLowerCase().includes(query)
-            );
+            function filterTable() {
+            var query = document.getElementById('searchInput').value.toLowerCase();
+            var filtered = allCustomerData.filter(function(row) {
+                var rcNo = row.rcNo ? String(row.rcNo).toLowerCase() : "";
+                var name = row.name ? String(row.name).toLowerCase() : "";
+                var mobile = row.mobile ? String(row.mobile).toLowerCase() : "";
+
+                return rcNo.includes(query) || name.includes(query) || mobile.includes(query);
+            });
             renderTable(filtered);
+        }
         }
     </script>
 </body>
